@@ -733,3 +733,24 @@ body.no-scroll {
   color: #fff;
   border-radius: 5px;
 }
+
+
+.cart-summary {
+  background: #fff8f7;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+}
+
+.cart-summary p {
+  margin: 0.5rem 0;
+  font-family: var(--poppins-font);
+}
+
+#cartMessage {
+  margin-top: 1rem;
+  font-weight: 500;
+  color: var(--second-color);
+}
