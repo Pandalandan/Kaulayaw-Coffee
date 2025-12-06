@@ -82,63 +82,75 @@ closePopupBtn.addEventListener("click", function (e) {
 /* =====================
    Shopping Cart
 ===================== */
-"use strict";
-
-const cart = [];
-const TAX_RATE = 0.12;
-
+// Get all add-to-cart buttons
 const addToCartButtons = document.querySelectorAll(".add-to-cart");
-const subtotalEl = document.getElementById("subtotal");
-const taxEl = document.getElementById("tax");
-const totalEl = document.getElementById("total");
-const checkoutBtn = document.getElementById("checkoutBtn");
-const cartMessage = document.getElementById("cartMessage");
+const cartSummary = document.querySelector(".cart-summary");
 
-/* Add product to cart */
-function addToCart(name, price) {
-  cart.push({
-    name: name,
-    price: price
-  });
-  updateTotals();
-}
+// Cart array
+let cart = [];
 
-/* Calculate totals */
-function updateTotals() {
-  let subtotal = 0;
+// Add item to cart
+addToCartButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const name = btn.getAttribute("data-name");
+    const price = parseFloat(btn.getAttribute("data-price"));
 
-  cart.forEach(function (item) {
-    subtotal += item.price;
-  });
+    // Check if item already exists in cart
+    const existingItem = cart.find((item) => item.name === name);
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      cart.push({ name, price, quantity: 1 });
+    }
 
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax;
-
-  subtotalEl.textContent = subtotal.toFixed(2);
-  taxEl.textContent = tax.toFixed(2);
-  totalEl.textContent = total.toFixed(2);
-}
-
-/* Button listeners */
-addToCartButtons.forEach(function (button) {
-  button.addEventListener("click", function () {
-    const name = button.dataset.name;
-    const price = Number(button.dataset.price);
-
-    addToCart(name, price);
+    updateCart();
   });
 });
 
-/* Checkout */
-checkoutBtn.addEventListener("click", function () {
-  if (cart.length === 0) {
-    cartMessage.textContent = "Please add an item before checking out.";
-    return;
-  }
+// Update the cart summary
+function updateCart() {
+  if (!cartSummary) return;
 
-  cartMessage.textContent =
-    "Thank you for your order! Your total is ₱" + totalEl.textContent;
+  // Clear previous content
+  cartSummary.innerHTML = "<h3>Your Cart</h3>";
 
-  cart.length = 0; // clear cart
-  updateTotals();
-});
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    const itemTotal = item.price * item.quantity;
+    total += itemTotal;
+
+    const itemDiv = document.createElement("p");
+    itemDiv.innerHTML = `${item.name} x ${item.quantity} - ₱${itemTotal.toFixed(2)} 
+      <button class="remove-btn" data-index="${index}">Remove</button>`;
+    cartSummary.appendChild(itemDiv);
+  });
+
+  const totalDiv = document.createElement("p");
+  totalDiv.classList.add("cart-total");
+  totalDiv.textContent = `Total: ₱${total.toFixed(2)}`;
+  cartSummary.appendChild(totalDiv);
+
+  const checkoutBtn = document.createElement("button");
+  checkoutBtn.textContent = "Checkout";
+  checkoutBtn.addEventListener("click", () => {
+    alert(`Thank you for your purchase! Total: ₱${total.toFixed(2)}`);
+    cart = [];
+    updateCart();
+  });
+  cartSummary.appendChild(checkoutBtn);
+
+  // Add remove functionality
+  const removeButtons = cartSummary.querySelectorAll(".remove-btn");
+  removeButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = parseInt(btn.getAttribute("data-index"));
+      cart.splice(index, 1);
+      updateCart();
+    });
+  });
+}
+
+// Initialize cart
+updateCart();
+
