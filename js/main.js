@@ -1,52 +1,80 @@
-// Swiper
-var swiper = new Swiper(".mySwiper", {
+"use strict";
+
+/* =====================
+   Swiper
+===================== */
+const swiper = new Swiper(".mySwiper", {
   spaceBetween: 30,
   centeredSlides: true,
   autoplay: {
     delay: 2500,
-    disableOnInteraction: false,
+    disableOnInteraction: false
   },
   pagination: {
     el: ".swiper-pagination",
-    clickable: true,
-  },
+    clickable: true
+  }
 });
-// Menu Open Close
-let menu = document.querySelector(".menu-icon");
-let navbar = document.querySelector(".navbar");
 
-menu.onclick = () => {
-  menu.classList.toggle("move");
+/* =====================
+   Mobile Menu
+===================== */
+const menuIcon = document.querySelector(".menu-icon");
+const navbar = document.querySelector(".navbar");
+
+menuIcon.addEventListener("click", function () {
+  menuIcon.classList.toggle("move");
   navbar.classList.toggle("open-menu");
-};
-// Close Menu On Scroll
-window.onscroll = () => {
-  menu.classList.remove("move");
+});
+
+window.addEventListener("scroll", function () {
+  menuIcon.classList.remove("move");
   navbar.classList.remove("open-menu");
-};
-// ScrollReveal Animation
+});
+
+/* =====================
+   ScrollReveal
+===================== */
 const animate = ScrollReveal({
   origin: "top",
   distance: "60px",
-  duration: "2500",
-  delay: "400",
+  duration: 2500,
+  delay: 400
 });
 
 animate.reveal(".nav");
 animate.reveal(".home-text", { origin: "left" });
 animate.reveal(".home-img", { origin: "bottom" });
-animate.reveal(".ser-box, .product-box,.team-box,.book-data", {
-  interval: 100,
+animate.reveal(".ser-box, .product-box, .team-box, .book-data", {
+  interval: 100
 });
 
-function toggle() {
-  var blur = document.getElementById('blur');
-  var popup = document.getElementById('popup');
-  
-  // Toggle both blur and popup
-  blur.classList.toggle('active');
-  popup.classList.toggle('popup-active');
+/* =====================
+   Product Popup
+===================== */
+const blurArea = document.querySelector(".product-content");
+const popup = document.querySelector(".popup");
+const productButtons = document.querySelectorAll(".button1");
+const closePopupBtn = popup.querySelector("a");
 
-  // Prevent body scrolling when the popup is active
-  document.body.classList.toggle('no-scroll', popup.classList.contains('popup-active'));
+function openPopup() {
+  blurArea.classList.add("active");
+  popup.classList.add("popup-active");
+  document.body.classList.add("no-scroll");
 }
+
+function closePopup() {
+  blurArea.classList.remove("active");
+  popup.classList.remove("popup-active");
+  document.body.classList.remove("no-scroll");
+}
+
+/* Attach events */
+productButtons.forEach(function (button) {
+  button.addEventListener("click", openPopup);
+});
+
+closePopupBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  closePopup();
+});
