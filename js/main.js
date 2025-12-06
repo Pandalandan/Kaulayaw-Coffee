@@ -78,3 +78,67 @@ closePopupBtn.addEventListener("click", function (e) {
   e.preventDefault();
   closePopup();
 });
+
+/* =====================
+   Shopping Cart
+===================== */
+"use strict";
+
+const cart = [];
+const TAX_RATE = 0.12;
+
+const addToCartButtons = document.querySelectorAll(".add-to-cart");
+const subtotalEl = document.getElementById("subtotal");
+const taxEl = document.getElementById("tax");
+const totalEl = document.getElementById("total");
+const checkoutBtn = document.getElementById("checkoutBtn");
+const cartMessage = document.getElementById("cartMessage");
+
+/* Add product to cart */
+function addToCart(name, price) {
+  cart.push({
+    name: name,
+    price: price
+  });
+  updateTotals();
+}
+
+/* Calculate totals */
+function updateTotals() {
+  let subtotal = 0;
+
+  cart.forEach(function (item) {
+    subtotal += item.price;
+  });
+
+  const tax = subtotal * TAX_RATE;
+  const total = subtotal + tax;
+
+  subtotalEl.textContent = subtotal.toFixed(2);
+  taxEl.textContent = tax.toFixed(2);
+  totalEl.textContent = total.toFixed(2);
+}
+
+/* Button listeners */
+addToCartButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    const name = button.dataset.name;
+    const price = Number(button.dataset.price);
+
+    addToCart(name, price);
+  });
+});
+
+/* Checkout */
+checkoutBtn.addEventListener("click", function () {
+  if (cart.length === 0) {
+    cartMessage.textContent = "Please add an item before checking out.";
+    return;
+  }
+
+  cartMessage.textContent =
+    "Thank you for your order! Your total is ₱" + totalEl.textContent;
+
+  cart.length = 0; // clear cart
+  updateTotals();
+});
